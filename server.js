@@ -21,7 +21,8 @@ var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWO
 
 app.all("/", function(request, response) {
   var ua = request.headers['user-agent'];
-  response.send(ua);
+  var ip = getIP(request);
+  response.send({ua: ua, ip: ip['clientIp']});
 });
 
 // Use connect method to connect to the Server
