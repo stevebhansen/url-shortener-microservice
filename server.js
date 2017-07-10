@@ -5,6 +5,7 @@
 var express = require('express');
 var app = express();
 var mongodb = require('mongodb');
+var getIP = require('ipware')().get_ip;
 
 
 // we've started you off with Express, 
@@ -15,6 +16,13 @@ app.use(express.static('public'));
 //var url = mongodb.MongoClient;
 var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
+
+
+
+app.all("/", function(request, response) {
+  var ua = request.headers['user-agent'];
+  response.send(ua);
+});
 
 // Use connect method to connect to the Server
   MongoClient.connect(url, function (err, db) {
