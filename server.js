@@ -1,5 +1,5 @@
 // server.js
-// where your node app starts
+// where your nodvar url = 'mongodb://localhoste app starts
 
 // init project
 var express = require('express');
@@ -12,12 +12,12 @@ var mongodb = require('mongodb');
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
-var MongoClient = mongodb.MongoClient;
+var MongoCvar url = 'mongodb://localhostlient = mongodb.MongoClient;
 
 var url = 'mongodb://localhost:27017/ds153392/url-shortener-microservice-db';
 
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+  console.log('Yourlistener.address().port);
 });
