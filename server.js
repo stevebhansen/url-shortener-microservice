@@ -12,12 +12,24 @@ var mongodb = require('mongodb');
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
-var MongoCvar url = 'mongodb://localhostlient = mongodb.MongoClient;
+//var url = mongodb.MongoClient;
+var MongoClient = mongodb.MongoClient;
+var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 
-var url = 'mongodb://localhost:27017/ds153392/url-shortener-microservice-db';
+// Use connect method to connect to the Server
+  MongoClient.connect(url, function (err, db) {
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    console.log('Connection established to', url);
 
+    // do some work here with the database.
 
+    //Close connection
+    db.close();
+  }
+});
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
-  console.log('Yourlistener.address().port);
+  console.log('Your app is listening on port ' + listener.address().port);
 });
