@@ -20,15 +20,20 @@ var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWO
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (request, response) {
   response.sendFile(__dirname + '/views/index.html');
+  
 });
 
-app.post("/new/", function(request, response) {
+app.get("/new/*", function(request, response) {
   var ua = request.headers['user-agent'];
   var ip = getIP(request);
-  response.send({ua: ua, ip: ip['clientIp']});
-  //response.send(request.params[0]);
+  var url = request.params[0];
+  //response.send({ua: ua, ip: ip['clientIp']});
+  response.send(request.params[0]);
 });
 
+app.get("/*", function(request, response){
+  response.send("hello steve");
+});
 // Use connect method to connect to the Server
   MongoClient.connect(url, function (err, db) {
   if (err) {
