@@ -26,7 +26,7 @@ app.get("/new/*", function(request, response) {
   var ua = request.headers['user-agent'];
   var ip = getIP(request);
   var url = request.params[0];
-  var site = {ip: ip['clientIp'], url: url, "expireAt": 1,};
+  var site = {ip: ip['clientIp'], url: url, createdAt: new Date()};
   if(validUrl.isUri(url)){
     writedb(url,site);
     response.send({ua: ua, ip: ip['clientIp']});
