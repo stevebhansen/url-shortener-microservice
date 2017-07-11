@@ -17,12 +17,16 @@ app.use(express.static('public'));
 var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 
+// http://expressjs.com/en/starter/basic-routing.html
+app.get("/", function (request, response) {
+  response.sendFile(__dirname + '/views/index.html');
+});
 
-
-app.all("/", function(request, response) {
+app.post("/new/", function(request, response) {
   var ua = request.headers['user-agent'];
   var ip = getIP(request);
   response.send({ua: ua, ip: ip['clientIp']});
+  //response.send(request.params[0]);
 });
 
 // Use connect method to connect to the Server
