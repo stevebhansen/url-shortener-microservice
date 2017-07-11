@@ -5,6 +5,7 @@
 var express = require('express');
 var app = express();
 var mongodb = require('mongodb');
+var validUrl = require('valid-url');
 var getIP = require('ipware')().get_ip;
 
 
@@ -26,9 +27,13 @@ app.get("/new/*", function(request, response) {
   var ip = getIP(request);
   var url = request.params[0];
   var site = {ip: ip['clientIp'], url: url};
-  writedb(url,site);
-  response.send({ua: ua, ip: ip['clientIp']});
- 
+  if(validUrl.isUri(url)){
+    writedb(url,site);
+    response.send({ua: ua, ip: ip['clientIp']});
+  }
+  else{
+    response.send(request.params[0] + " is an invalid url:  Please enter a url in the format of http://www.example.com");
+  }
 });
 
 app.get("/*", function(request, response){
