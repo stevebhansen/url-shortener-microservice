@@ -14,8 +14,6 @@ var getIP = require('ipware')().get_ip;
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 //var url = mongodb.MongoClient;
-var MongoClient = mongodb.MongoClient;
-var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (request, response) {
@@ -28,32 +26,37 @@ app.get("/new/*", function(request, response) {
   var ip = getIP(request);
   var url = request.params[0];
   var site = {ip: ip['clientIp'], url: url};
-  //response.send({ua: ua, ip: ip['clientIp']});
-  // Use connect method to connect to the Server
-  MongoClient.connect(url, function (err, db) {
-  if (err) {
-    console.log('Unable to connect to the mongoDB server. Error:', err);
-  } else {
-    console.log('Connection established to', url);
-    
-    // do some work here with the database.
-    //var collection = db.collection('microservice');
-    /*collection.insert(site, function(err, data){
-        if(err) throw err;
-        console.log(JSON.stringify(site));
-        db.close();
-    });*/
-    //Close connection
-    db.close();
-  }
-});
+  writedb(url,site);
+  response.send({ua: ua, ip: ip['clientIp']});
+ 
 });
 
 app.get("/*", function(request, response){
   response.send("hello steve");
 });
 
+var writedb = function (url, site){
+  var MongoClient = mongodb.MongoClient;
+  var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 
+   MongoClient.connect(url, function (err, db) {
+    if (err) {
+      console.log('Unable to connect to the mongoDB server. Error:', err);
+    } else {
+      console.log('Connection established to', url);
+
+      // do some work here with the database.
+      var collection = db.collection('microservice');
+      collection.insert(site, function(err, data){
+          if(err) throw err;
+          console.log(JSON.stringify(site));
+          db.close();
+      });
+      //Close connection
+      db.close();
+    }
+  });
+}
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
