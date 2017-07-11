@@ -27,26 +27,33 @@ app.get("/new/*", function(request, response) {
   var ua = request.headers['user-agent'];
   var ip = getIP(request);
   var url = request.params[0];
+  var site = {ip: ip['clientIp'], url: url};
   //response.send({ua: ua, ip: ip['clientIp']});
-  response.send(request.params[0]);
-});
-
-app.get("/*", function(request, response){
-  response.send("hello steve");
-});
-// Use connect method to connect to the Server
+  // Use connect method to connect to the Server
   MongoClient.connect(url, function (err, db) {
   if (err) {
     console.log('Unable to connect to the mongoDB server. Error:', err);
   } else {
     console.log('Connection established to', url);
-
+    
     // do some work here with the database.
-
+    //var collection = db.collection('microservice');
+    /*collection.insert(site, function(err, data){
+        if(err) throw err;
+        console.log(JSON.stringify(site));
+        db.close();
+    });*/
     //Close connection
     db.close();
   }
 });
+});
+
+app.get("/*", function(request, response){
+  response.send("hello steve");
+});
+
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
