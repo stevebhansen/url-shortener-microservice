@@ -63,7 +63,7 @@ var writedb = function (url, site){
   });
 }
 
-function getNextSequenceValue(sequenceName){
+var getNextSequenceValue = function(sequenceName){
 
    var sequenceDocument = db.counters.findAndModify({
       query:{_id: sequenceName },
