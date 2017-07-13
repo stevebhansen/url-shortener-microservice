@@ -14,9 +14,18 @@ var getIP = require('ipware')().get_ip;
 var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 var client = null;
+
+MongoClient.connect(url, function (err, db) {
+  if (err) {
+      console.log('Unable to connect to the mongoDB server. Error:', err);
+    } else {
+      console.log('Connection established to', url);
+      client = db;
+    }
+});
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
-//var url = mongodb.MongoClient;
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (request, response) {
@@ -30,7 +39,8 @@ app.get("/new/*", function(request, response) {
   var url = request.params[0];
   var site = {ip: ip['clientIp'], url: url, createdAt: new Date()};
   if(validUrl.isUri(url)){
-    writedb(url,site);
+    writedb(site);
+    getNextSequenceValue(ua);
     response.send({ua: ua, ip: ip['clientIp']});
   }
   else{
@@ -42,48 +52,22 @@ app.get("/*", function(request, response){
   response.send("hello steve");
 });
 
-var connect = function (url) {
-  MongoClient.connect(url, function (err, db) {
-  if (err) {
-      console.log('Unable to connect to the mongoDB server. Error:', err);
-    } else {
-      console.log('Connection established to', url);
-      client = db;
-    }
-  });
-}
-
-var writedb = function (url, site){
-  
-
-   MongoClient.connect(url, function (err, db) {
-    if (err) {
-      console.log('Unable to connect to the mongoDB server. Error:', err);
-    } else {
-      console.log('Connection established to', url);
-      client = db;
-      // do some work here with the database.
-      var collection = db.collection('microservice');
-      collection.insert(site, function(err, data){
-          if(err) throw err;
-          console.log(JSON.stringify(site));
-          db.close();
-      });
-      //Close connection
-      db.close();
-    }
+var writedb = function (site){
+  var collection = client.collection('microservice');
+  collection.insert(site, function(err, data){
+      if(err) throw err;
+      console.log(JSON.stringify(site));
   });
 }
 
 var getNextSequenceValue = function(sequenceName){
-
-   var sequenceDocument = db.counters.findAndModify({
+   var sequenceDocument = client.counters.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
    });
 	
-   return sequenceDocument.sequence_value;
+   //return sequenceDocument.sequence_value;
 }
 
 // listen for requests :)
