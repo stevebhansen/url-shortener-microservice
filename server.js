@@ -11,7 +11,9 @@ var getIP = require('ipware')().get_ip;
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
-
+var MongoClient = mongodb.MongoClient;
+var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
+var client = null;
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 //var url = mongodb.MongoClient;
@@ -40,16 +42,26 @@ app.get("/*", function(request, response){
   response.send("hello steve");
 });
 
+var connect = function (url) {
+  MongoClient.connect(url, function (err, db) {
+  if (err) {
+      console.log('Unable to connect to the mongoDB server. Error:', err);
+    } else {
+      console.log('Connection established to', url);
+      client = db;
+    }
+  });
+}
+
 var writedb = function (url, site){
-  var MongoClient = mongodb.MongoClient;
-  var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
+  
 
    MongoClient.connect(url, function (err, db) {
     if (err) {
       console.log('Unable to connect to the mongoDB server. Error:', err);
     } else {
       console.log('Connection established to', url);
-
+      client = db;
       // do some work here with the database.
       var collection = db.collection('microservice');
       collection.insert(site, function(err, data){
