@@ -24,6 +24,10 @@ MongoClient.connect(url, function (err, db) {
     }
 });
 
+var collection = client.collection('counter');
+//todo
+//if id 0 does not exist setup new counter
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -61,11 +65,13 @@ var writedb = function (site){
 }
 
 var getNextSequenceValue = function(sequenceName){
-   var sequenceDocument = client.counters.findAndModify({
+  var collection = client.collection('counter');
+  
+   /*var sequenceDocument = client.counters.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
-   });
+   });*/
 	
    //return sequenceDocument.sequence_value;
 }
