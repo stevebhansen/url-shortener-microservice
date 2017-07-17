@@ -22,8 +22,10 @@ MongoClient.connect(url, function (err, db) {
       console.log('Connection established to', url);
       client = db;
       var collection_counter = db.collection('counter');
-      var test = collection_counter.find( { "sequence_value": 0 }).pretty();
-      console.log(test);
+      var test = collection_counter.find();
+      console.log(test[0]);
+      
+      
       
     }
 });
