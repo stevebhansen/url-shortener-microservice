@@ -24,10 +24,6 @@ MongoClient.connect(url, function (err, db) {
     }
 });
 
-var collection = client.collection('counter');
-//todo
-//if id 0 does not exist setup new counter
-
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -41,10 +37,9 @@ app.get("/new/*", function(request, response) {
   var ua = request.headers['user-agent'];
   var ip = getIP(request);
   var url = request.params[0];
-  var site = {ip: ip['clientIp'], url: url, createdAt: new Date()};
+  var site = {ip: ip['clientIp'], url: url, createdAt: new Date(), id:getNextSequenceValue("url_counter")};
   if(validUrl.isUri(url)){
     writedb(site);
-    getNextSequenceValue(ua);
     response.send({ua: ua, ip: ip['clientIp']});
   }
   else{
@@ -66,7 +61,7 @@ var writedb = function (site){
 
 var getNextSequenceValue = function(sequenceName){
   var collection = client.collection('counter');
-  var sequenceDocument = client.counters.findAndModify({
+  var sequenceDocument = collection.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
