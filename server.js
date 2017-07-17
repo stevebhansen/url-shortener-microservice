@@ -66,14 +66,13 @@ var writedb = function (site){
 
 var getNextSequenceValue = function(sequenceName){
   var collection = client.collection('counter');
-  
-   /*var sequenceDocument = client.counters.findAndModify({
+  var sequenceDocument = client.counters.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
-   });*/
+   });
 	
-   //return sequenceDocument.sequence_value;
+   return sequenceDocument.sequence_value;
 }
 
 // listen for requests :)
