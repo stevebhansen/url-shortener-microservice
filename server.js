@@ -34,17 +34,20 @@ app.get("/", function (request, response) {
 });
 
 app.get("/new/*", function(request, response) {
-  var ua = request.headers['user-agent'];
-  var ip = getIP(request);
-  var url = request.params[0];
-  var site = {ip: ip['clientIp'], url: url, createdAt: new Date(), id:getNextSequenceValue("url_counter")};
-  if(validUrl.isUri(url)){
-    writedb(site);
-    response.send({ua: ua, ip: ip['clientIp']});
-  }
-  else{
-    response.send(request.params[0] + " is an invalid url:  Please enter a url in the format of http://www.example.com");
-  }
+  getNextSequenceValue("url_counter", function(count){
+    console.log(count);
+    var ua = request.headers['user-agent'];
+    var ip = getIP(request);
+    var url = request.params[0];
+    var site = {ip: ip['clientIp'], url: url, createdAt: new Date(), url_count:count};
+    if(validUrl.isUri(url)){
+      writedb(site);
+      response.send({ua: ua, ip: ip['clientIp']});
+    }
+    else{
+      response.send(request.params[0] + " is an invalid url:  Please enter a url in the format of http://www.example.com");
+    }
+  });
 });
 
 app.get("/*", function(request, response){
@@ -59,15 +62,17 @@ var writedb = function (site){
   });
 }
 
-var getNextSequenceValue = function(sequenceName){
+var getNextSequenceValue = function(sequenceName, callback){
   var collection = client.collection('counter');
   var sequenceDocument = collection.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
    });
-	
-   return sequenceDocument.sequence_value;
+	if(typeof callback === "function"){
+    callback(sequenceDocument.sequence_value);
+  }
+   
 }
 
 // listen for requests :)
