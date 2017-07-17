@@ -62,24 +62,17 @@ app.get("/*", function(request, response){
 
 var writedb = function (site){
   var collection = client.collection('microservice');
-  console.log("writing", collection);
   collection.insert(site, function(err, data){
       if(err) throw err;
       console.log(JSON.stringify(site));
   });
+  console.log(collection.find().toArray(function(err, items) {}));
 }
 
 var getNextSequenceValue = function(sequenceName, callback){
-  //console.log("getting count");
-  var collection_counter = client.collection('counter');
-  //console.log(collection_counter);
-  var test = collection_counter.find( { "sequence_value": 0 }, function(err, data){
-    if(err) throw err;
-    //console.log(data);
-  } );
-  
+  var collection_counter = client.collection(sequenceName);
   var sequenceDocument = collection_counter.findAndModify({
-      query:{_id: sequenceName },
+      query:{_id: 'url_counter' },
       update: {$inc:{sequence_value:1}},
       new:true
    });
