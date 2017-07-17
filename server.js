@@ -63,12 +63,19 @@ var writedb = function (site){
 }
 
 var getNextSequenceValue = function(sequenceName, callback){
+  console.log("getting count");
   var collection = client.collection('counter');
+  //console.log(collection);
+  var test = collection.find( { sequence_value: { $gt: 0 } },function(stuff){
+    console.log(stuff.sequence_value, stuff.id);
+  } );
+  
   var sequenceDocument = collection.findAndModify({
       query:{_id: sequenceName },
       update: {$inc:{sequence_value:1}},
       new:true
    });
+  console.log(sequenceDocument.sequence_value);
 	if(typeof callback === "function"){
     callback(sequenceDocument.sequence_value);
   }
