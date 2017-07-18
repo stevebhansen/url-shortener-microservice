@@ -16,8 +16,8 @@ var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWO
 var client = null;
 
 MongoClient.connect(url,function(err, db){
-  var results = db.collection("counter").find({_id: 'url_counter'})
-  console.log(results)
+  var results = db.collection("counters").find({"_id":"url_counter"})
+  console.log(db.collection("counters").getIndexes())
   
 })
 
