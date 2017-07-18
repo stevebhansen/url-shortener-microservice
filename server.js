@@ -16,10 +16,14 @@ var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWO
 var client = null;
 
 MongoClient.connect(url,function(err, db){
-  var results = db.collection("counters").find({"_id":"url_counter"})
-  console.log(db.collection("counters").getIndexes())
-  
-})
+  if (err) throw err;
+  var query = {_id: "url_counter"};
+  db.collection("counters").find(query).toArray(function(err,results){
+    if (err) throw err;
+    console.log(results[0].sequence_value);
+    db.close();
+  });
+});
 
 /*
 MongoClient.connect(url, function (err, db) {
@@ -28,12 +32,6 @@ MongoClient.connect(url, function (err, db) {
     } else {
       console.log('Connection established to', url);
       client = db;
-      var collection_counter = db.collection('counter');
-      var test = collection_counter.find();
-      console.log(test[0]);
-      
-      
-      
     }
 });
 */
@@ -77,6 +75,8 @@ var writedb = function (site){
 }
 
 var getNextSequenceValue = function(sequenceName, callback){
+  
+  
   var collection_counter = client.collection(sequenceName);
   var sequenceDocument = collection_counter.findAndModify({
       query:{_id: 'url_counter' },
