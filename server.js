@@ -80,18 +80,14 @@ var getNextSequenceValue = function(callback){
       query:{_id: 'url_counter' },
       update: {$inc:{sequence_value:1}},
       new:true
-   });
+   }, function(err){
+      client.collection("counters").find(query).toArray(function(err,results){
+      if (err) throw err;
+      console.log(results[0].sequence_value);
+      callback(results[0].sequence_value);
+  });
+  });
   
-  
-  var collection_counter = client.collection("counters");
-  var sequenceDocument = collection_counter.findAndModify({
-      query:{_id: 'url_counter' },
-      update: {$inc:{sequence_value:1}},
-      new:true
-   });
-  console.log(sequenceDocument);
-	
-   
 }
 
 // listen for requests :)
