@@ -14,7 +14,7 @@ var getIP = require('ipware')().get_ip;
 //var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 var client = null;
-
+/*
 MongoClient.connect(url,function(err, db){
   if (err) throw err;
   var query = {_id: "url_counter"};
@@ -24,8 +24,8 @@ MongoClient.connect(url,function(err, db){
     db.close();
   });
 });
+*/
 
-/*
 MongoClient.connect(url, function (err, db) {
   if (err) {
       console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -34,7 +34,7 @@ MongoClient.connect(url, function (err, db) {
       client = db;
     }
 });
-*/
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -45,7 +45,7 @@ app.get("/", function (request, response) {
 });
 
 app.get("/new/*", function(request, response) {
-  getNextSequenceValue("url_counter", function(count){
+  getNextSequenceValue(function(count){
     console.log(count);
     var ua = request.headers['user-agent'];
     var ip = getIP(request);
@@ -74,19 +74,23 @@ var writedb = function (site){
   console.log(collection.find().toArray(function(err, items) {}));
 }
 
-var getNextSequenceValue = function(sequenceName, callback){
+var getNextSequenceValue = function(callback){
+  var query = {_id: "url_counter"};
+  var results = client.collection("counters").findAndModify({
+      query:{_id: 'url_counter' },
+      update: {$inc:{sequence_value:1}},
+      new:true
+   });
   
   
-  var collection_counter = client.collection(sequenceName);
+  var collection_counter = client.collection("counters");
   var sequenceDocument = collection_counter.findAndModify({
       query:{_id: 'url_counter' },
       update: {$inc:{sequence_value:1}},
       new:true
    });
-  console.log(sequenceDocument.sequence_value);
-	if(typeof callback === "function"){
-    callback(sequenceDocument.sequence_value);
-  }
+  console.log(sequenceDocument);
+	
    
 }
 
