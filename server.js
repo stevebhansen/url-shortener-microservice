@@ -46,7 +46,6 @@ app.get("/", function (request, response) {
 
 app.get("/new/*", function(request, response) {
   getNextSequenceValue(function(count){
-    console.log(count);
     var ua = request.headers['user-agent'];
     var ip = getIP(request);
     var url = request.params[0];
@@ -71,21 +70,22 @@ var writedb = function (site){
       if(err) throw err;
       console.log(JSON.stringify(site));
   });
-  console.log(collection.find().toArray(function(err, items) {}));
 }
 
 var getNextSequenceValue = function(callback){
   var query = {_id: "url_counter"};
-  var results = client.collection("counters").findAndModify({
-      query:{_id: 'url_counter' },
+  client.collection("counters").findAndModify({
+      query: query,
       update: {$inc:{sequence_value:1}},
       new:true
-   }, function(err){
+   }, function(err,data){
+      console.log(data)
       client.collection("counters").find(query).toArray(function(err,results){
       if (err) throw err;
       console.log(results[0].sequence_value);
+      console.log("callback time")
       callback(results[0].sequence_value);
-  });
+    });
   });
   
 }
