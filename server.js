@@ -4,17 +4,24 @@
 // init project
 var express = require('express');
 var app = express();
-var mongodb = require('mongodb');
+var MongoClient = require('mongodb').MongoClient;
 var validUrl = require('valid-url');
 var getIP = require('ipware')().get_ip;
 
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
-var MongoClient = mongodb.MongoClient;
+//var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 var client = null;
 
+MongoClient.connect(url,function(err, db){
+  var results = db.collection("counter").find({_id: 'url_counter'})
+  console.log(results)
+  
+})
+
+/*
 MongoClient.connect(url, function (err, db) {
   if (err) {
       console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -29,7 +36,7 @@ MongoClient.connect(url, function (err, db) {
       
     }
 });
-
+*/
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
