@@ -74,7 +74,7 @@ var writedb = function (site){
 
 var getNextSequenceValue = function(callback){
   var query = {_id: "url_counter"};
-  client.collection("counters").findAndModify({
+  /*client.collection("counters").findAndModify({
       query: query,
       update: {$inc:{sequence_value:1}},
       new:true
@@ -87,7 +87,17 @@ var getNextSequenceValue = function(callback){
       callback(results[0].sequence_value);
     });
   });
-  
+  */
+  client.collection("counters").findOneAndUpdate({
+    "query": query,
+    "update": {"$inc":{sequence_value:1}},
+    "returnOriginal": false
+  },
+  function(err, result){
+    console.log(result)
+    callback(result)
+  }
+                                                )
 }
 
 // listen for requests :)
