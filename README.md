@@ -1,24 +1,27 @@
 URL Shortener Microsservice
 =========================
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+User Stories:
 
-**Glitch** is the friendly commmunity where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
+I can pass a URL as a parameter and I will receive a shortened URL in the JSON response.
+When I visit that shortened URL, it will redirect me to my original link.
 
-Find out more [about Glitch](https://glitch.com/about).
 
+**Example creation usage:**
 
-Your Project
-------------
+https://cloudy-crib.glitch.me/new/http://www.google.com
 
-On the front-end,
-- edit `public/client.js`, `public/style.css` and `views/index.html`
-- drag in `assets`, like images or music, to add them to your project
+**Example creation output:**
 
-On the back-end,
-- your app starts at `server.js`
-- add frameworks and packages in `package.json`
-- safely store app secrets in `.env` (nobody can see this but you and people you invite)
+{"original_url":"http://www.google.com","short_url":"https://cloudy-crib.glitch.me/13"}
+
+**Usage:**
+
+https://cloudy-crib.glitch.me/13
+
+**Will redirect to:**
+
+http://www.google.com
 
 
 Made by [Steve Hansen](https://www.freecodecamp.org/stevebhansen)
