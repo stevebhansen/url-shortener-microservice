@@ -14,17 +14,6 @@ var getIP = require('ipware')().get_ip;
 //var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PASSWORD + '@ds153392.mlab.com:53392/url-shortener-microservice-db';
 var client = null;
-/*
-MongoClient.connect(url,function(err, db){
-  if (err) throw err;
-  var query = {_id: "url_counter"};
-  db.collection("counters").find(query).toArray(function(err,results){
-    if (err) throw err;
-    console.log(results[0].sequence_value);
-    db.close();
-  });
-});
-*/
 
 MongoClient.connect(url, function (err, db) {
   if (err) {
@@ -52,7 +41,6 @@ app.get("/new/*", function(request, response) {
     var site = {ip: ip['clientIp'], url: url, createdAt: new Date(), url_count:count};
     if(validUrl.isUri(url)){
       writedb(site);
-      //response.send({ua: ua, ip: ip['clientIp']});
       response.send({original_url: url, short_url: "https://cloudy-crib.glitch.me/" + count});
     }
     else{
@@ -62,20 +50,15 @@ app.get("/new/*", function(request, response) {
 });
 
 app.get("/*", function(request, response){
-  console.log("getting page", request.params[0]);
-  console.log(typeof parseInt(request.params[0]));
-  if(typeof parseInt(request.params[0]) == 'number'){
-    if(request.params[0] != 'null'){
-      var query = {url_count: parseInt(request.params[0])};
-      client.collection("microservice").findOne(query, function(err,doc){
-        if(err) throw err;
-        else{
-          console.log(doc);
-          if(doc != null)
-            response.send(doc.url);
-        }
-      });
-    }
+  if(typeof parseInt(request.params[0]) == 'number' && request.params[0] != null){
+    var query = {url_count: parseInt(request.params[0])};
+    client.collection("microservice").findOne(query, function(err,doc){
+      if(err) throw err;
+      else{
+        if(doc != null)
+          response.redirect(doc.url);
+      }
+    });
   }
 });
 
