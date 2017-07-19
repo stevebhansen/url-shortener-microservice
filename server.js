@@ -88,7 +88,12 @@ var getNextSequenceValue = function(callback){
     });
   });
   */
-  client.collection("counters").findOneAndUpdate({
+    client.collection.findOneAndUpdate(query, {"$inc":{sequence_value:1}}, {upsert: true}, function(err,doc) {
+       if (err) { throw err; }
+       else { console.log("Updated"); }
+     });
+  /*
+  client.collection("counters").updateOne({
     "query": query,
     "update": {"$inc":{sequence_value:1}},
     "returnOriginal": false
@@ -97,7 +102,7 @@ var getNextSequenceValue = function(callback){
     console.log(result)
     callback(result)
   }
-                                                )
+                       *?                         )
 }
 
 // listen for requests :)
