@@ -62,17 +62,20 @@ app.get("/new/*", function(request, response) {
 });
 
 app.get("/*", function(request, response){
-  if(typeof parseInt(request.params[0]) == 'Number' ){
-    
-    var query = {url_count: parseInt(request.params[0])};
-    client.collection("microservice").findOne(query, function(err,doc){
-      if(err) throw err;
-      else{
-        console.log(doc);
-        response.send(doc.url);
-      }
-
-    });
+  console.log("getting page", request.params[0]);
+  console.log(typeof parseInt(request.params[0]));
+  if(typeof parseInt(request.params[0]) == 'number'){
+    if(request.params[0] != 'null'){
+      var query = {url_count: parseInt(request.params[0])};
+      client.collection("microservice").findOne(query, function(err,doc){
+        if(err) throw err;
+        else{
+          console.log(doc);
+          if(doc != null)
+            response.send(doc.url);
+        }
+      });
+    }
   }
 });
 
