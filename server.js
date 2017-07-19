@@ -52,7 +52,8 @@ app.get("/new/*", function(request, response) {
     var site = {ip: ip['clientIp'], url: url, createdAt: new Date(), url_count:count};
     if(validUrl.isUri(url)){
       writedb(site);
-      response.send({ua: ua, ip: ip['clientIp']});
+      //response.send({ua: ua, ip: ip['clientIp']});
+      response.send({original_url: url, short_url: "https://cloudy-crib.glitch.me/" + count});
     }
     else{
       response.send(request.params[0] + " is an invalid url:  Please enter a url in the format of http://www.example.com");
@@ -61,7 +62,7 @@ app.get("/new/*", function(request, response) {
 });
 
 app.get("/*", function(request, response){
-  response.send("hello steve");
+  var short_u
 });
 
 var writedb = function (site){
@@ -74,35 +75,14 @@ var writedb = function (site){
 
 var getNextSequenceValue = function(callback){
   var query = {_id: "url_counter"};
-  /*client.collection("counters").findAndModify({
-      query: query,
-      update: {$inc:{sequence_value:1}},
-      new:true
-   }, function(err,data){
-      console.log(data)
-      client.collection("counters").find(query).toArray(function(err,results){
-      if (err) throw err;
-      console.log(results[0].sequence_value);
-      console.log("callback time")
-      callback(results[0].sequence_value);
-    });
-  });
-  */
-    client.collection.findOneAndUpdate(query, {"$inc":{sequence_value:1}}, {upsert: true}, function(err,doc) {
-       if (err) { throw err; }
-       else { console.log("Updated"); }
-     });
-  /*
-  client.collection("counters").updateOne({
-    "query": query,
-    "update": {"$inc":{sequence_value:1}},
-    "returnOriginal": false
-  },
-  function(err, result){
-    console.log(result)
-    callback(result)
-  }
-                       *?                         )
+  client.collection("counters").findOneAndUpdate(query, {"$inc":{sequence_value:1}}, {upsert: true}, function(err,doc) {
+     if (err) { throw err; }
+     else { 
+       console.log("Updated"); 
+       console.log(doc.value.sequence_value);
+       callback(doc.value.sequence_value)
+     }
+   });
 }
 
 // listen for requests :)
