@@ -62,7 +62,12 @@ app.get("/new/*", function(request, response) {
 });
 
 app.get("/*", function(request, response){
-  var short_u
+  console.log("whohoo!");
+  var query = {url_count: request.params[0]};
+  client.collection("microservice").findOne(query, function(err,doc){
+    if(err) throw err;
+    console.log(doc);
+  });
 });
 
 var writedb = function (site){
